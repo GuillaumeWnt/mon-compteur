@@ -2,86 +2,273 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Week-end à la mer</title>
+  
+  <!-- Forcer la non-mise en cache pour voir les modifications en direct -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <link rel="manifest" href="manifest.json">
   <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
       margin: 0;
-      padding: 20px;
+      padding: 24px 16px 60px;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f0f7f9;
-      color: #1e293b;
+      background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 40%);
+      min-height: 100vh;
+      color: #0f172a;
     }
-    .header {
+    header {
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 40px;
     }
-    .header h1 {
+    header h1 {
       margin: 0;
       color: #0369a1;
-      font-size: 24px;
+      font-size: 26px;
+      font-weight: 800;
     }
-    .header p {
-      margin: 4px 0 0;
+    header p {
+      margin: 6px 0 0;
       color: #64748b;
       font-size: 14px;
     }
-    .card {
-      background: #ffffff;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      max-width: 420px;
+
+    /* Conteneur de la ligne du temps */
+    .timeline-container {
+      position: relative;
+      max-width: 360px;
       margin: 0 auto;
+      padding: 20px 0;
     }
-    .card img {
+
+    /* Ligne courbe pointillée SVG en arrière-plan */
+    .curved-line {
+      position: absolute;
+      top: 40px;
+      left: 0;
       width: 100%;
-      height: 240px;
+      height: 220px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Étapes et bulles */
+    .step {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      margin-bottom: 120px;
+      cursor: pointer;
+    }
+    .step-1 {
+      justify-content: flex-start;
+      padding-left: 20px;
+    }
+    .step-2 {
+      justify-content: flex-end;
+      padding-right: 20px;
+      margin-bottom: 20px;
+    }
+
+    .bubble {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #0284c7;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 8px 16px rgba(2, 132, 199, 0.2);
+      transition: transform 0.2s ease;
+    }
+    .bubble:active {
+      transform: scale(0.92);
+    }
+    .bubble-icon {
+      font-size: 28px;
+    }
+    .bubble-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0369a1;
+      margin-top: 2px;
+    }
+
+    /* Style spécifique au teaser */
+    .bubble.teaser {
+      border: 3px dashed #94a3b8;
+      background: #f1f5f9;
+      box-shadow: none;
+    }
+    .bubble.teaser .bubble-title {
+      color: #64748b;
+    }
+
+    /* Fenêtre de détail (Modale) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 24px 24px 0 0;
+      overflow: hidden;
+      box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15);
+      animation: slideUp 0.25s ease-out;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-card img {
+      width: 100%;
+      height: 220px;
       object-fit: cover;
       display: block;
     }
-    .content {
-      padding: 20px;
+    .modal-body {
+      padding: 24px;
     }
-    .badge {
+    .modal-badge {
       display: inline-block;
       background: #e0f2fe;
       color: #0369a1;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 4px 10px;
       border-radius: 20px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-    .content h2 {
-      margin: 0 0 8px;
-      font-size: 18px;
+    .modal-body h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      color: #0f172a;
     }
-    .content p {
-      margin: 0;
-      line-height: 1.5;
+    .modal-body p {
+      margin: 0 0 20px;
+      line-height: 1.6;
       color: #475569;
       font-size: 15px;
+    }
+    .btn-close {
+      width: 100%;
+      padding: 14px;
+      background: #0284c7;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
+  <header>
     <h1>Escapade Marine</h1>
-    <p>Le journal de bord du week-end</p>
-  </div>
+    <p>Touche une bulle pour ouvrir l'étape</p>
+  </header>
 
-  <div class="card">
-    <img src="20261003_103117.jpg" alt="En route pour la mer">
-    
-    <div class="content">
-      <span class="badge">Étape 1 • Départ</span>
-      <h2>En route !</h2>
-      <p>Coffre chargé, lunettes de soleil prêtes et playlist lancée. Direction l'air marin.</p>
+  <div class="timeline-container">
+    <!-- SVG qui trace la courbe en pointillé entre la bulle 1 et la bulle 2 -->
+    <svg class="curved-line" viewBox="0 0 300 220" preserveAspectRatio="none">
+      <path d="M 60 20 C 60 140, 240 80, 240 200" 
+            fill="none" 
+            stroke="#0284c7" 
+            stroke-width="3" 
+            stroke-dasharray="6 6" />
+    </svg>
+
+    <!-- Étape 1 : Actuelle -->
+    <div class="step step-1" onclick="openStep('step1')">
+      <div class="bubble">
+        <span class="bubble-icon">🚗</span>
+        <span class="bubble-title">Étape 1</span>
+      </div>
+    </div>
+
+    <!-- Étape 2 : Teaser -->
+    <div class="step step-2" onclick="openStep('step2')">
+      <div class="bubble teaser">
+        <span class="bubble-icon">🔒</span>
+        <span class="bubble-title">Bientôt</span>
+      </div>
     </div>
   </div>
 
+  <!-- Fenêtre Pop-up / Modale -->
+  <div id="modal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <img id="modal-img" src="" alt="Étape">
+      <div class="modal-body">
+        <span id="modal-badge" class="modal-badge"></span>
+        <h2 id="modal-title"></h2>
+        <p id="modal-desc"></p>
+        <button class="btn-close" onclick="closeModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration des données des étapes
+    const stepsData = {
+      step1: {
+        badge: "Étape 1 • Départ",
+        title: "En route vers la côte !",
+        desc: "Coffre chargé, lunettes de soleil prêtes et playlist branchée. On vient de quitter la ville, l'air marin nous attend.",
+        img: "voiture.jpg" // Nom exact de ta photo sur GitHub
+      },
+      step2: {
+        badge: "Étape 2 • Mystère",
+        title: "Arrivée à la mer...",
+        desc: "Cette étape sera débloquée dès notre arrivée sur place. Premier bain ou première glace ?",
+        img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80"
+      }
+    };
+
+    function openStep(key) {
+      const data = stepsData[key];
+      document.getElementById('modal-badge').textContent = data.badge;
+      document.getElementById('modal-title').textContent = data.title;
+      document.getElementById('modal-desc').textContent = data.desc;
+      document.getElementById('modal-img').src = data.img;
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // Force le rafraîchissement quand on rouvre l'application sur smartphone
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    });
+  </script>
 </body>
 </html>
