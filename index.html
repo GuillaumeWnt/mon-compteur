@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Compteur</title>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f3f4f6;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Compteur PWA</h2>
+    <p id="count" style="font-size: 32px; font-weight: bold;">0</p>
+    <button id="btn">Ajouter 1</button>
+  </div>
+  <script>
+    let n = 0;
+    const btn = document.getElementById('btn');
+    const txt = document.getElementById('count');
+    btn.onclick = () => { n++; txt.textContent = n; };
+  </script>
+</body>
+</html>
